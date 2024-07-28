@@ -1,32 +1,59 @@
 import tkinter as tk
-from tkinter import messagebox, ttk
+from tkinter import messagebox
+from PIL import Image, ImageTk
 
 class DreamBikeBuilder:
     def __init__(self, root):
+        # Initialize the main application window
         self.root = root
         self.root.title("DreamBike Builder")
-        self.root.geometry("600x400")
+        self.root.geometry("800x600")
 
+        # Define prices for each component
+        self.prices = {
+            "Mountain Frame": 200,
+            "Road Frame": 150,
+            "Hybrid Frame": 100,
+            "Standard Wheels": 50,
+            "Racing Wheels": 100,
+            "Mountain Wheels": 80,
+            "Standard Handlebars": 30,
+            "Drop Handlebars": 50,
+            "Flat Handlebars": 40,
+            "Lights": 15,
+            "Bells": 10,
+            "Basket": 25
+        }
+
+        # Dictionary to hold references to images
+        self.images = {}
+
+        # Variables to store user selections
         self.selected_frame = tk.StringVar()
         self.selected_wheels = tk.StringVar()
         self.selected_handlebars = tk.StringVar()
         self.selected_accessories = []
-        
+
+        # Display the welcome screen
         self.create_welcome_screen()
 
     def create_welcome_screen(self):
+        # Clear the screen and display the welcome screen
         self.clear_screen()
         tk.Label(self.root, text="DreamBike Builder", font=("Helvetica", 24)).pack(pady=20)
         tk.Label(self.root, text="Welcome to DreamBike Builder! Customize your dream bike.").pack(pady=10)
 
+        # Display buttons to navigate the application
         tk.Button(self.root, text="Start Building", command=self.create_main_menu).pack(pady=5)
         tk.Button(self.root, text="Learn More", command=self.create_learn_more).pack(pady=5)
         tk.Button(self.root, text="Exit", command=self.exit_application).pack(pady=5)
 
     def create_main_menu(self):
+        # Clear the screen and display the main menu
         self.clear_screen()
         tk.Label(self.root, text="Main Menu", font=("Helvetica", 24)).pack(pady=20)
 
+        # Display buttons for each step of the customization process
         tk.Button(self.root, text="Choose Frame", command=self.create_frame_selection).pack(pady=5)
         tk.Button(self.root, text="Select Wheels", command=self.create_wheels_selection).pack(pady=5)
         tk.Button(self.root, text="Customize Handlebars", command=self.create_handlebars_customization).pack(pady=5)
@@ -34,58 +61,94 @@ class DreamBikeBuilder:
         tk.Button(self.root, text="Review & Order", command=self.create_review_order).pack(pady=5)
         tk.Button(self.root, text="Home", command=self.create_welcome_screen).pack(pady=5)
 
+    def load_image(self, filename):
+        # Load and resize an image, and keep a reference to avoid garbage collection
+        try:
+            image = Image.open(filename)
+            photo = ImageTk.PhotoImage(image.resize((100, 100)))
+            self.images[filename] = photo
+            return photo
+        except Exception as e:
+            print(f"Error loading image {filename}: {e}")
+            return None
+
     def create_frame_selection(self):
+        # Clear the screen and display frame selection options
         self.clear_screen()
         tk.Label(self.root, text="Choose Frame", font=("Helvetica", 24)).pack(pady=20)
 
         frames = ["Mountain Frame", "Road Frame", "Hybrid Frame"]
+        frame_container = tk.Frame(self.root)
+        frame_container.pack(pady=10)
         for frame in frames:
-            tk.Radiobutton(self.root, text=frame, variable=self.selected_frame, value=frame).pack(anchor=tk.W)
+            frame_img = self.load_image(f"{frame.replace(' ', '_').lower()}.png")
+            frame_button = tk.Radiobutton(frame_container, text=f"{frame} - ${self.prices[frame]}", variable=self.selected_frame, value=frame, image=frame_img, compound=tk.TOP, indicatoron=False, borderwidth=2, relief="solid", padx=10, pady=10)
+            frame_button.pack(side=tk.LEFT, padx=10)
 
+        # Display navigation buttons
         tk.Button(self.root, text="Next", command=self.create_wheels_selection).pack(pady=20)
         tk.Button(self.root, text="Back", command=self.create_main_menu).pack(pady=5)
 
     def create_wheels_selection(self):
+        # Clear the screen and display wheel selection options
         self.clear_screen()
         tk.Label(self.root, text="Select Wheels", font=("Helvetica", 24)).pack(pady=20)
 
         wheels = ["Standard Wheels", "Racing Wheels", "Mountain Wheels"]
+        wheel_container = tk.Frame(self.root)
+        wheel_container.pack(pady=10)
         for wheel in wheels:
-            tk.Radiobutton(self.root, text=wheel, variable=self.selected_wheels, value=wheel).pack(anchor=tk.W)
+            wheel_img = self.load_image(f"{wheel.replace(' ', '_').lower()}.png")
+            wheel_button = tk.Radiobutton(wheel_container, text=f"{wheel} - ${self.prices[wheel]}", variable=self.selected_wheels, value=wheel, image=wheel_img, compound=tk.TOP, indicatoron=False, borderwidth=2, relief="solid", padx=10, pady=10)
+            wheel_button.pack(side=tk.LEFT, padx=10)
 
+        # Display navigation buttons
         tk.Button(self.root, text="Next", command=self.create_handlebars_customization).pack(pady=20)
         tk.Button(self.root, text="Back", command=self.create_frame_selection).pack(pady=5)
 
     def create_handlebars_customization(self):
+        # Clear the screen and display handlebar customization options
         self.clear_screen()
         tk.Label(self.root, text="Customize Handlebars", font=("Helvetica", 24)).pack(pady=20)
 
         handlebars = ["Standard Handlebars", "Drop Handlebars", "Flat Handlebars"]
+        handlebar_container = tk.Frame(self.root)
+        handlebar_container.pack(pady=10)
         for handlebar in handlebars:
-            tk.Radiobutton(self.root, text=handlebar, variable=self.selected_handlebars, value=handlebar).pack(anchor=tk.W)
+            handlebar_img = self.load_image(f"{handlebar.replace(' ', '_').lower()}.png")
+            handlebar_button = tk.Radiobutton(handlebar_container, text=f"{handlebar} - ${self.prices[handlebar]}", variable=self.selected_handlebars, value=handlebar, image=handlebar_img, compound=tk.TOP, indicatoron=False, borderwidth=2, relief="solid", padx=10, pady=10)
+            handlebar_button.pack(side=tk.LEFT, padx=10)
 
+        # Display navigation buttons
         tk.Button(self.root, text="Next", command=self.create_accessories_selection).pack(pady=20)
         tk.Button(self.root, text="Back", command=self.create_wheels_selection).pack(pady=5)
 
     def create_accessories_selection(self):
+        # Clear the screen and display accessory selection options
         self.clear_screen()
         tk.Label(self.root, text="Add Accessories", font=("Helvetica", 24)).pack(pady=20)
 
         self.accessory_vars = []
         accessories = ["Lights", "Bells", "Basket"]
+        accessory_container = tk.Frame(self.root)
+        accessory_container.pack(pady=10)
         for accessory in accessories:
+            accessory_img = self.load_image(f"{accessory.lower()}.png")
             var = tk.StringVar()
-            chk = tk.Checkbutton(self.root, text=accessory, variable=var, onvalue=accessory, offvalue="")
-            chk.pack(anchor=tk.W)
+            chk = tk.Checkbutton(accessory_container, text=f"{accessory} - ${self.prices[accessory]}", variable=var, onvalue=accessory, offvalue="", image=accessory_img, compound=tk.TOP, indicatoron=False, borderwidth=2, relief="solid", padx=10, pady=10)
+            chk.pack(side=tk.LEFT, padx=10)
             self.accessory_vars.append(var)
 
+        # Display navigation buttons
         tk.Button(self.root, text="Next", command=self.create_review_order).pack(pady=20)
         tk.Button(self.root, text="Back", command=self.create_handlebars_customization).pack(pady=5)
 
     def create_review_order(self):
+        # Clear the screen and display the review order screen
         self.clear_screen()
         tk.Label(self.root, text="Review & Order", font=("Helvetica", 24)).pack(pady=20)
 
+        # Display selected options
         selected_accessories = [var.get() for var in self.accessory_vars if var.get()]
         self.selected_accessories = ", ".join(selected_accessories) if selected_accessories else "None"
 
@@ -94,22 +157,56 @@ class DreamBikeBuilder:
         tk.Label(self.root, text=f"Handlebars: {self.selected_handlebars.get()}").pack(anchor=tk.W)
         tk.Label(self.root, text=f"Accessories: {self.selected_accessories}").pack(anchor=tk.W)
 
-        tk.Label(self.root, text="Total Price: $500").pack(pady=10)
+        # Calculate and display the total price
+        total_price = self.calculate_total_price()
+        tk.Label(self.root, text=f"Total Price: ${total_price}").pack(pady=10)
 
+        # Display entry fields for user details
         tk.Label(self.root, text="Enter Your Details:").pack(pady=10)
         self.name_entry = self.create_label_entry("Name:")
         self.address_entry = self.create_label_entry("Address:")
         self.payment_entry = self.create_label_entry("Payment Info:")
 
-        tk.Button(self.root, text="Submit Order", command=self.create_confirmation).pack(pady=20)
+        # Display navigation buttons
+        tk.Button(self.root, text="Submit Order", command=self.save_order_details).pack(pady=20)
         tk.Button(self.root, text="Back", command=self.create_accessories_selection).pack(pady=5)
 
+    def calculate_total_price(self):
+        # Calculate the total price of the selected options
+        frame_price = self.prices.get(self.selected_frame.get(), 0)
+        wheels_price = self.prices.get(self.selected_wheels.get(), 0)
+        handlebars_price = self.prices.get(self.selected_handlebars.get(), 0)
+        accessories_price = sum(self.prices.get(accessory, 0) for accessory in self.selected_accessories.split(", "))
+        total_price = frame_price + wheels_price + handlebars_price + accessories_price
+        return total_price
+
+    def save_order_details(self):
+        # Save the order details to a text file and display the confirmation screen
+        order_details = {
+            "Name": self.name_entry.get(),
+            "Address": self.address_entry.get(),
+            "Payment Info": self.payment_entry.get(),
+            "Frame": self.selected_frame.get(),
+            "Wheels": self.selected_wheels.get(),
+            "Handlebars": self.selected_handlebars.get(),
+            "Accessories": self.selected_accessories,
+            "Total Price": self.calculate_total_price(),
+        }
+
+        with open("order_details.txt", "w") as file:
+            for key, value in order_details.items():
+                file.write(f"{key}: {value}\n")
+
+        self.create_confirmation()
+
     def create_confirmation(self):
+        # Clear the screen and display the order confirmation screen
         self.clear_screen()
         tk.Label(self.root, text="Order Confirmation", font=("Helvetica", 24)).pack(pady=20)
         tk.Label(self.root, text="Thank you for your order!").pack(pady=10)
         tk.Label(self.root, text="Your order details:").pack(pady=10)
 
+        # Display the order details
         tk.Label(self.root, text=f"Frame: {self.selected_frame.get()}").pack(anchor=tk.W)
         tk.Label(self.root, text=f"Wheels: {self.selected_wheels.get()}").pack(anchor=tk.W)
         tk.Label(self.root, text=f"Handlebars: {self.selected_handlebars.get()}").pack(anchor=tk.W)
@@ -119,6 +216,7 @@ class DreamBikeBuilder:
         tk.Button(self.root, text="Home", command=self.create_welcome_screen).pack(pady=20)
 
     def create_label_entry(self, label_text):
+        # Create and return a labeled entry widget
         frame = tk.Frame(self.root)
         frame.pack(pady=5)
         tk.Label(frame, text=label_text).pack(side=tk.LEFT)
@@ -127,6 +225,7 @@ class DreamBikeBuilder:
         return entry
 
     def create_learn_more(self):
+        # Clear the screen and display the learn more screen
         self.clear_screen()
         tk.Label(self.root, text="Learn More", font=("Helvetica", 24)).pack(pady=20)
         info = (
@@ -139,14 +238,18 @@ class DreamBikeBuilder:
         tk.Button(self.root, text="Back", command=self.create_welcome_screen).pack(pady=20)
 
     def exit_application(self):
+        # Ask for confirmation and exit the application if confirmed
         if messagebox.askyesno("Exit", "Are you sure you want to exit?"):
             self.root.quit()
 
     def clear_screen(self):
+        # Clear all widgets from the screen
         for widget in self.root.winfo_children():
             widget.destroy()
 
 if __name__ == "__main__":
+    # Create the main application window and start the application
     root = tk.Tk()
     app = DreamBikeBuilder(root)
     root.mainloop()
+
